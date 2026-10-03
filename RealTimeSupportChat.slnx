@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/API/">
+    <Project Path="RealTimeSupportChat.Api/RealTimeSupportChat.Api.csproj" />
+  </Folder>
+  <Folder Name="/Core/">
+    <Project Path="RealTimeSupportChat.Application/RealTimeSupportChat.Application.csproj" />
+    <Project Path="RealTimeSupportChat.Domain/RealTimeSupportChat.Domain.csproj" />
+  </Folder>
+  <Folder Name="/Infrastructure/">
+    <Project Path="RealTimeSupportChat.Identity/RealTimeSupportChat.Identity.csproj" />
+    <Project Path="RealTimeSupportChat.Infrastructure/RealTimeSupportChat.Infrastructure.csproj" />
+    <Project Path="RealTimeSupportChat.Persistence/RealTimeSupportChat.Persistence.csproj" />
+  </Folder>
+</Solution>

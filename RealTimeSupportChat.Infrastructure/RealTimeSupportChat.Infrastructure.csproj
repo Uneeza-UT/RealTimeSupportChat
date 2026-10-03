@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RealTimeSupportChat.Application\RealTimeSupportChat.Application.csproj" />
+    <ProjectReference Include="..\RealTimeSupportChat.Identity\RealTimeSupportChat.Identity.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EmailService\" />
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
