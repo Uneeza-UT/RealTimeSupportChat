@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using RealTimeSupportChat.Application.Contracts.Identity;
-using RealTimeSupportChat.Application.Settings.Identity;
+using RealTimeSupportChat.Application.Models.Identity;
 using RealTimeSupportChat.Identity.DbContext;
 using RealTimeSupportChat.Identity.Models;
 using RealTimeSupportChat.Identity.Services;
@@ -37,7 +37,12 @@ namespace RealTimeSupportChat.Identity
             .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
             .AddDefaultTokenProviders();
 
+
+
             services.AddTransient<IAuthService, AuthService>();
+            services.AddScoped<ICurrentUserService, CurrentUserService>();
+
+
 
             services.AddAuthentication(options =>
             {
