@@ -61,6 +61,19 @@ namespace RealTimeSupportChat.Api.Middleware
                     break;
 
 
+                case ConflictException conflictException:
+
+                    statusCode = HttpStatusCode.Conflict;
+                    problemDetails = new CustomProblemDetails
+                    {
+                        Title = conflictException.Message,
+                        Status = (int)statusCode,
+                        Detail = conflictException.InnerException?.Message,
+                        Type = nameof(ConflictException)
+                    };
+                    break;
+
+
 
                 case ForbiddenException forbiddenException:
 

@@ -1,4 +1,5 @@
-﻿using RealTimeSupportChat.Application.Contracts.Persistence;
+﻿using Microsoft.EntityFrameworkCore;
+using RealTimeSupportChat.Application.Contracts.Persistence;
 using RealTimeSupportChat.Persistence.DatabaseContext;
 
 namespace RealTimeSupportChat.Persistence.Repositories
@@ -10,6 +11,14 @@ namespace RealTimeSupportChat.Persistence.Repositories
         public GenericRepository(ApplicationDbContext dbContext)
         {
             _dbContext = dbContext;
+        }
+
+
+        public async Task<IReadOnlyList<T>> GetAsync()
+        {
+            return await _dbContext.Set<T>()
+                .AsNoTracking()
+                .ToListAsync();
         }
 
 

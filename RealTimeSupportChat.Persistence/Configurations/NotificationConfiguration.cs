@@ -9,7 +9,7 @@ namespace RealTimeSupportChat.Persistence.Configurations
         public void Configure(EntityTypeBuilder<Notification> builder)
         {
             builder.Property(q => q.Message)
-                .HasMaxLength(200);
+                .HasMaxLength(500);
 
             builder.Property(q => q.IsRead)
                 .HasDefaultValue(false);

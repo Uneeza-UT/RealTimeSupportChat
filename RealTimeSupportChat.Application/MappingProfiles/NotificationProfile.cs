@@ -9,6 +9,7 @@ namespace RealTimeSupportChat.Application.MappingProfiles
         public NotificationProfile()
         {
             CreateMap<Notification, GetNotificationDto>();
+            CreateMap<SendNotificationDto, Notification>();
         }
     }
 }
