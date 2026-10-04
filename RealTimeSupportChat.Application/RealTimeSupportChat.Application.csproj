@@ -11,17 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Contracts\Email\" />
-    <Folder Include="Contracts\Services\" />
-    <Folder Include="DTOs\Identity\" />
-    <Folder Include="Settings\Email\" />
-    <Folder Include="Validations\Message\" />
-    <Folder Include="Validations\Attachment\" />
-    <Folder Include="Validations\Notification\" />
-    <Folder Include="Validations\Ticket\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="16.2.0" />
     <PackageReference Include="FluentValidation" Version="12.1.1" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />

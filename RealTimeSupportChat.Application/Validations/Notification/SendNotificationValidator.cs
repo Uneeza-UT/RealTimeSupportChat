@@ -7,16 +7,16 @@ namespace RealTimeSupportChat.Application.Validations.Notification
     {
         public SendNotificationValidator()
         {
-            RuleFor(t => t.TicketId)
+            RuleFor(n => n.TicketId)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
 
 
-            RuleFor(t => t.ReceiverId)
+            RuleFor(n => n.ReceiverId)
                 .NotEmpty().WithMessage("{PropertyName} is required.");
 
 
-            RuleFor(t => t.Message)
+            RuleFor(n => n.Message)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .MaximumLength(500).WithMessage("{PropertyName} cannot exceed 500 characters");
         }

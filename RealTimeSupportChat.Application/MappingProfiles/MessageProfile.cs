@@ -9,7 +9,6 @@ namespace RealTimeSupportChat.Application.MappingProfiles
         public MessageProfile()
         {
             CreateMap<Message, GetMessageDto>();
-            CreateMap<CreateMessageDto, Message>();
         }
     }
 }

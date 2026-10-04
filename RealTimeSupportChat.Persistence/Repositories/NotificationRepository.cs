@@ -38,5 +38,16 @@ namespace RealTimeSupportChat.Persistence.Repositories
             await _dbContext.Set<Notification>().AddRangeAsync(notifications);
             await _dbContext.SaveChangesAsync();
         }
+
+
+
+        // Get a list of notification entities using Ids
+        public async Task<List<Notification>> GetAllByIdsAsync(List<int> ids)
+        {
+            return await _dbContext.Set<Notification>()
+                .AsNoTracking()
+                .Where(n => ids.Contains(n.Id))
+                .ToListAsync();
+        }
     }
 }

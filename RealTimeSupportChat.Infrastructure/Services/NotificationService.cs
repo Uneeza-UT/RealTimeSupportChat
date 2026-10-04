@@ -100,5 +100,31 @@ namespace RealTimeSupportChat.Infrastructure.Services
             notification.IsRead = true;
             await _notificationRepository.SaveChangesAsync();
         }
+
+
+
+        // Delete a notification or multiple notifications
+        public async Task DeleteRangeAsync(List<int> ids)
+        {
+            var notifications = await _notificationRepository.GetAllByIdsAsync(ids);
+
+            if (notifications.Count != ids.Count)
+            {
+                throw new NotFoundException(nameof(Notification), "One or more notifications were not found.");
+            }
+
+
+            // Ensures only the notification receiver can delete the notifications
+
+            string userId = _currentUserService.UserId;
+
+            if (notifications.Any(m => m.ReceiverId != userId))
+            {
+                throw new ForbiddenException("You are not authorized to delete one or more notifications.");
+            }
+
+
+            await _notificationRepository.DeleteRangeAsync(notifications);
+        }
     }
 }

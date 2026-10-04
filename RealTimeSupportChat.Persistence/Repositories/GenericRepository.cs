@@ -44,6 +44,13 @@ namespace RealTimeSupportChat.Persistence.Repositories
         }
 
 
+        public async Task DeleteRangeAsync(List<T> entities)
+        {
+            _dbContext.RemoveRange(entities);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
         public async Task SaveChangesAsync()
         {
             await _dbContext.SaveChangesAsync();

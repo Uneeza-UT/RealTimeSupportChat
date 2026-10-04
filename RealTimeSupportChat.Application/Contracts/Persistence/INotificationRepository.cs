@@ -7,5 +7,6 @@ namespace RealTimeSupportChat.Application.Contracts.Persistence
         Task<IReadOnlyList<Notification>> GetAllByReceiverIdAsync(string receiverId);
         Task<IReadOnlyList<Notification>> GetUnreadByReceiverIdAsync(string receiverId);
         Task CreateRangeAsync(IEnumerable<Notification> notifications);
+        Task<List<Notification>> GetAllByIdsAsync(List<int> ids);
     }
 }

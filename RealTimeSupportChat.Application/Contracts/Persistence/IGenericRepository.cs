@@ -6,6 +6,7 @@
         Task<T?> GetByIdAsync(int id);
         Task<T> CreateAsync(T entity);
         Task DeleteAsync(T entity);
+        Task DeleteRangeAsync(List<T> entities);
         Task SaveChangesAsync();
     }
 }

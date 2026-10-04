@@ -9,5 +9,6 @@ namespace RealTimeSupportChat.Application.Contracts.Services
         Task SendAsync(SendNotificationDto dto);
         Task SendManyAsync(List<SendNotificationDto> dtos);
         Task MarkAsReadAsync(MarkNotificationAsReadDto dto);
+        Task DeleteRangeAsync(List<int> ids);
     }
 }

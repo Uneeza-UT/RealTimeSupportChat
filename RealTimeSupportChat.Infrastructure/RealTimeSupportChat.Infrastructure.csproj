@@ -7,13 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RealTimeSupportChat.Application\RealTimeSupportChat.Application.csproj" />
-    <ProjectReference Include="..\RealTimeSupportChat.Identity\RealTimeSupportChat.Identity.csproj" />
+    <PackageReference Include="Resend" Version="0.22.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="EmailService\" />
-    <Folder Include="Services\" />
+    <ProjectReference Include="..\RealTimeSupportChat.Application\RealTimeSupportChat.Application.csproj" />
+    <ProjectReference Include="..\RealTimeSupportChat.Identity\RealTimeSupportChat.Identity.csproj" />
   </ItemGroup>
 
 </Project>

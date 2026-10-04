@@ -7,12 +7,12 @@ namespace RealTimeSupportChat.Application.Validations.Notification
     {
         public MarkNotificationAsReadValidator()
         {
-            RuleFor(t => t.Id)
+            RuleFor(n => n.Id)
                 .NotEmpty().WithMessage("{PropertyName} is required.")
                 .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
 
 
-            RuleFor(t => t.IsRead)
+            RuleFor(n => n.IsRead)
                 .NotEmpty().WithMessage("{PropertyName} is required.");
         }
     }
