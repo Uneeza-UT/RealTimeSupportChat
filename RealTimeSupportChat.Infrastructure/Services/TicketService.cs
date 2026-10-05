@@ -32,7 +32,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             this._ticketRepository = ticketRepository;
             this._currentUserService = currentUserService;
             this._userManager = userManager;
-            this._notificationService = notificationService;
+            this._notificationService = notificationService;   
         }
 
 
@@ -130,10 +130,10 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             var users = await _userManager.GetUsersInRoleAsync("SupportManager");
 
+            List<SendNotificationDto> notifications = new();
+
             if (users.Count != 0)
             {
-                List<SendNotificationDto> notifications = new();
-
                 foreach (var user in users)
                 {
                     notifications.Add(new SendNotificationDto
@@ -146,7 +146,6 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
                 await _notificationService.SendManyAsync(notifications);
             }
-            
 
             return ticket.Id;
         }

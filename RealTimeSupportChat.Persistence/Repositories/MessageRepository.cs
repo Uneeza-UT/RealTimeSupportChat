@@ -44,9 +44,9 @@ namespace RealTimeSupportChat.Persistence.Repositories
             return await _dbContext.Set<Message>()
                 .AsNoTracking()
                 .Include(m => m.Attachments)
+                .Include(m => m.Ticket)
                 .Where(m => ids.Contains(m.Id))
                 .ToListAsync();
         }
-
     }
 }

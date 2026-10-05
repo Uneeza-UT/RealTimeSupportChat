@@ -28,6 +28,7 @@ namespace RealTimeSupportChat.Infrastructure
             services.AddScoped<IMessageService, MessageService>();
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFileStorageService, FileStorageService>();
+            services.AddScoped<IChatHubService, ChatHubService>();
 
             return services;
         }

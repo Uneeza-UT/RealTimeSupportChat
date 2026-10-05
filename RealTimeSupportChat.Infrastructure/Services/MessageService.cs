@@ -19,13 +19,15 @@ namespace RealTimeSupportChat.Infrastructure.Services
         private readonly ICurrentUserService _currentUserService;
         private readonly IFileStorageService _fileStorageService;
         private readonly INotificationService _notificationService;
+        private readonly IChatHubService _chatHubService;
 
         public MessageService(IMapper mapper,
             IMessageRepository messageRepository,
             ITicketRepository ticketRepository,
             ICurrentUserService currentUserService,
             IFileStorageService fileStorageService,
-            INotificationService notificationService)
+            INotificationService notificationService,
+            IChatHubService chatHubService)
         {
             this._mapper = mapper;
             this._messageRepository = messageRepository;
@@ -33,6 +35,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             this._currentUserService = currentUserService;
             this._fileStorageService = fileStorageService;
             this._notificationService = notificationService;
+            this._chatHubService = chatHubService;
         }
 
 
@@ -144,12 +147,18 @@ namespace RealTimeSupportChat.Infrastructure.Services
             await _messageRepository.CreateAsync(message);
 
 
-            // Notify the user about a new message
+            // Send the new message to both the sender and receiver in real time via SignalR
+
+            var messageDto = _mapper.Map<GetMessageDto>(message);
 
             string receiverId = userId == ticket.CustomerId
                 ? ticket.AssignedToId
                 : ticket.CustomerId;
 
+            await _chatHubService.SendMessageAsync(receiverId, messageDto);
+
+
+            // Notify the user about a new message
 
             var notification = new SendNotificationDto
             {
@@ -177,6 +186,16 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
+            // Ensure all messages belong to the same ticket
+
+            var ticket = messages.First().Ticket!;
+
+            if (messages.Any(m => m.TicketId != ticket.Id))
+            {
+                throw new BadRequestException("All messages must belong to the same ticket.");
+            }
+
+
             // Ensures only the message sender can delete the messages
 
             string userId = _currentUserService.UserId;
@@ -197,7 +216,16 @@ namespace RealTimeSupportChat.Infrastructure.Services
             
             await _fileStorageService.DeleteFilesAsync(filePaths);
 
-            await _messageRepository.DeleteRangeAsync(messages);      
+            await _messageRepository.DeleteRangeAsync(messages);
+
+
+            // Remove the messages from both current participants in real time via SignalR
+
+            string receiverId = userId == ticket.CustomerId
+               ? ticket.AssignedToId!
+               : ticket.CustomerId;
+
+            await _chatHubService.DeleteMessagesAsync(ids, userId, receiverId);
         }
 
     }

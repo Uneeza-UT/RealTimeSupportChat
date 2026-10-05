@@ -14,14 +14,17 @@ namespace RealTimeSupportChat.Infrastructure.Services
         private readonly IMapper _mapper;
         private readonly INotificationRepository _notificationRepository;
         private readonly ICurrentUserService _currentUserService;
+        private readonly IChatHubService _chatHubService;
 
         public NotificationService(IMapper mapper,
             INotificationRepository notificationRepository,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService,
+            IChatHubService chatHubService)
         {
             this._mapper = mapper;
             this._notificationRepository = notificationRepository;
             this._currentUserService = currentUserService;
+            this._chatHubService = chatHubService;
         }
 
 
@@ -59,8 +62,14 @@ namespace RealTimeSupportChat.Infrastructure.Services
                 throw new BadRequestException("Invalid notification entity. ", validationResult);
             }
 
-            var data = _mapper.Map<Notification>(dto);
-            await _notificationRepository.CreateAsync(data);
+            var notification = _mapper.Map<Notification>(dto);
+            await _notificationRepository.CreateAsync(notification);
+
+
+            // Send the new notification to receiver in real time via SignalR
+
+            var notificationDto = _mapper.Map<GetNotificationDto>(notification);
+            await _chatHubService.SendNotificationAsync(notificationDto);
         }
 
 
@@ -82,8 +91,15 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
             
 
-            var data = _mapper.Map<List<Notification>>(dtos);
-            await _notificationRepository.CreateRangeAsync(data);
+            var notifications = _mapper.Map<List<Notification>>(dtos);
+            await _notificationRepository.CreateRangeAsync(notifications);
+
+
+
+            // Send the new notifications to receivers in real time via SignalR
+
+            var notificationDtos = _mapper.Map<List<GetNotificationDto>>(notifications);
+            await _chatHubService.SendNotificationsAsync(notificationDtos);
         }
 
 
