@@ -154,7 +154,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
         // Assign ticket to a support agent or support manager
         // Only users with "SupportManager" role can perform this task
-        public async Task AssignTicketAsync(AssignTicketDto dto)
+        public async Task AssignTicketAsync(int id, AssignTicketDto dto)
         {
             // Validate the dto
             var validator = new AssignTicketValidator();
@@ -166,11 +166,11 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
-            var ticket = await _ticketRepository.GetByIdAsync(dto.Id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
-                throw new NotFoundException(nameof(Ticket), dto.Id);
+                throw new NotFoundException(nameof(Ticket), id);
             }
 
 
@@ -246,7 +246,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
         // Change status of ticket
         // Only the user assigned to the ticket can perform this task
-        public async Task ChangeTicketStatusAsync(ChangeTicketStatusDto dto)
+        public async Task ChangeTicketStatusAsync(int id, ChangeTicketStatusDto dto)
         {
             // Validate the dto
             var validator = new ChangeTicketStatusValidator();
@@ -258,11 +258,11 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
-            var ticket = await _ticketRepository.GetByIdAsync(dto.Id);
+            var ticket = await _ticketRepository.GetByIdAsync(id);
 
             if (ticket == null)
             {
-                throw new NotFoundException(nameof(Ticket), dto.Id);
+                throw new NotFoundException(nameof(Ticket), id);
             }
 
 
@@ -307,6 +307,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
 
 
+        // Only users with "SupportManager" role can perform this task
         public async Task DeleteAsync(int id)
         {
             var ticket = await _ticketRepository.GetByIdAsync(id);

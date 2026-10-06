@@ -69,7 +69,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
 
         
-        public async Task<int> SendAsync(CreateMessageDto dto)
+        public async Task<int> SendAsync(int ticketId, CreateMessageDto dto)
         {
             string userId = _currentUserService.UserId;
 
@@ -83,11 +83,11 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
-            var ticket = await _ticketRepository.GetByIdAsync(dto.TicketId);
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
 
             if (ticket == null)
             {
-                throw new NotFoundException(nameof(Ticket), dto.TicketId);
+                throw new NotFoundException(nameof(Ticket), ticketId);
             }
 
 
@@ -175,7 +175,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
 
         // Delete a message or multiple messages
-        public async Task DeleteRangeAsync(List<int> ids)
+        public async Task DeleteRangeAsync(int ticketId, List<int> ids)
         {
             var messages = await _messageRepository.GetAllByIdsWithAttachmentsAsync(ids);
 
@@ -185,14 +185,21 @@ namespace RealTimeSupportChat.Infrastructure.Services
                 throw new NotFoundException(nameof(Message), "One or more messages were not found.");
             }
 
+            
+
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+
+            if (ticket == null)
+            {
+                throw new NotFoundException(nameof(Ticket), ticketId);
+            }
+
 
             // Ensure all messages belong to the same ticket
 
-            var ticket = messages.First().Ticket!;
-
-            if (messages.Any(m => m.TicketId != ticket.Id))
+            if (messages.Any(m => m.TicketId != ticketId))
             {
-                throw new BadRequestException("All messages must belong to the same ticket.");
+                throw new BadRequestException("One or more messages do not belong to the specified ticket.");
             }
 
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using RealTimeSupportChat.Domain;
+using RealTimeSupportChat.Domain.Enums;
 
 namespace RealTimeSupportChat.Persistence.Configurations
 {
@@ -13,7 +14,7 @@ namespace RealTimeSupportChat.Persistence.Configurations
 
             builder.Property(q => q.Status)
                 .HasConversion<string>()
-                .HasDefaultValue("Open");
+                .HasDefaultValue(TicketStatus.Open);
 
 
             builder.Property(q => q.Subject)

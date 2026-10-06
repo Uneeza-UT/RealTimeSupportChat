@@ -104,13 +104,13 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
 
 
-        public async Task MarkAsReadAsync(MarkNotificationAsReadDto dto)
+        public async Task MarkAsReadAsync(int id)
         {
-            var notification = await _notificationRepository.GetByIdAsync(dto.Id);
+            var notification = await _notificationRepository.GetByIdAsync(id);
 
             if (notification == null)
             {
-                throw new NotFoundException(nameof(Notification), dto.Id);
+                throw new NotFoundException(nameof(Notification), id);
             }
 
             notification.IsRead = true;

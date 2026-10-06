@@ -7,13 +7,12 @@ namespace RealTimeSupportChat.Application.Validations.Message
     {
         public CreateMessageValidator()
         {
-            RuleFor(m => m.TicketId)
-               .NotEmpty().WithMessage("{PropertyName} is required.")
-               .GreaterThan(0).WithMessage("{PropertyName} must be greater than 0.");
+            RuleFor(m => m)
+                .Must(m =>
+                    !string.IsNullOrWhiteSpace(m.Content) ||
+                    m.Attachments.Any())
+                .WithMessage("A message must contain text or at least one attachment.");
 
-
-            RuleFor(m => m.Content)
-               .NotEmpty().WithMessage("{PropertyName} is required.");
         }
     }
 }

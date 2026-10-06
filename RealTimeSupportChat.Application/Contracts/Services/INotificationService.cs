@@ -8,7 +8,7 @@ namespace RealTimeSupportChat.Application.Contracts.Services
         Task<List<GetNotificationDto>> GetUnreadAsync();
         Task SendAsync(SendNotificationDto dto);
         Task SendManyAsync(List<SendNotificationDto> dtos);
-        Task MarkAsReadAsync(MarkNotificationAsReadDto dto);
+        Task MarkAsReadAsync(int id);
         Task DeleteRangeAsync(List<int> ids);
     }
 }
