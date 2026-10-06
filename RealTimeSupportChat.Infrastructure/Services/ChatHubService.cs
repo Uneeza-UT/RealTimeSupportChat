@@ -29,7 +29,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
         {
             await _hubContext.Clients
                 .Users(senderId, receiverId)
-                .SendAsync("MessageDeleted", messageIds);
+                .SendAsync("MessagesDeleted", messageIds);
         }
 
 
