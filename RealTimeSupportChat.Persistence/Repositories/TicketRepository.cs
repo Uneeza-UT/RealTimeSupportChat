@@ -31,22 +31,5 @@ namespace RealTimeSupportChat.Persistence.Repositories
                 .ToListAsync();
         }
 
-
-        // Get one ticket that belongs to a specific customer
-        public async Task<Ticket?> GetByIdAndCustomerIdAsync(int ticketId, string customerId)
-        {
-            return await _dbContext.Set<Ticket>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.Id == ticketId && t.CustomerId == customerId);
-        }
-
-
-        // Get one ticket that is assigned to a specific support agent
-        public async Task<Ticket?> GetByIdAndAssignedToIdAsync(int ticketId, string assignedToId)
-        {
-            return await _dbContext.Set<Ticket>()
-                .AsNoTracking()
-                .FirstOrDefaultAsync(t => t.Id == ticketId && t.AssignedToId == assignedToId);
-        }
     }
 }

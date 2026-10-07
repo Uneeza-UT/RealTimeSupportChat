@@ -113,7 +113,8 @@ namespace RealTimeSupportChat.Identity.Services
                 EmailConfirmed = true
             };
 
-            var result = await _userManager.CreateAsync(user);
+            var result = await _userManager.CreateAsync(user, request.Password);
+
 
             if (!result.Succeeded)
             {

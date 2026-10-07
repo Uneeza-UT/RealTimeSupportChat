@@ -113,6 +113,13 @@ namespace RealTimeSupportChat.Infrastructure.Services
                 throw new NotFoundException(nameof(Notification), id);
             }
 
+
+            if (notification.ReceiverId != _currentUserService.UserId)
+            {
+                throw new ForbiddenException("You can only mark your own notifications as read.");
+            }
+
+
             notification.IsRead = true;
             await _notificationRepository.SaveChangesAsync();
         }
@@ -126,7 +133,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             if (notifications.Count != ids.Count)
             {
-                throw new NotFoundException(nameof(Notification), "One or more notifications were not found.");
+                throw new NotFoundException("One or more notifications were not found.");
             }
 
 
@@ -136,7 +143,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             if (notifications.Any(m => m.ReceiverId != userId))
             {
-                throw new ForbiddenException("You are not authorized to delete one or more notifications.");
+                throw new ForbiddenException("You can only delete your own notifications.");
             }
 
 

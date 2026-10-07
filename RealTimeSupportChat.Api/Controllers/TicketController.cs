@@ -21,6 +21,8 @@ namespace RealTimeSupportChat.Api.Controllers
 
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
         public async Task<ActionResult<List<GetTicketDto>>> Get()
         {
             var tickets = await _ticketService.GetAsync();
@@ -30,6 +32,9 @@ namespace RealTimeSupportChat.Api.Controllers
 
 
         [HttpGet("{id}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<GetTicketDto>> Get(int id)
         {
             var ticket = await _ticketService.GetByIdAsync(id);

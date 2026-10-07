@@ -42,26 +42,25 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
         public async Task<List<GetMessageDto>> GetByTicketIdAsync(int ticketId)
         {
-            IReadOnlyList<Message> messages;
+            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
 
-            string userId = _currentUserService.UserId;
-            string role = _currentUserService.Role;
-
-            switch (role)
+            if (ticket == null)
             {
-                case "SupportManager":
-                    messages = await _messageRepository.GetAllByTicketIdAsync(ticketId);
-                    break;
-
-                case "Customer" or "SupportAgent":
-                    messages = await _messageRepository.GetAllByTicketIdAndUserIdAsync(ticketId, userId);
-                    break;
-
-
-                default:
-                    throw new ForbiddenException("You are not authorized to view this ticket's messages.");
+                throw new NotFoundException(nameof(Ticket), ticketId);
             }
 
+
+            string userId = _currentUserService.UserId;
+ 
+
+            if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
+            {
+                throw new ForbiddenException(
+                    "You can only view messages of tickets you created or are assigned to.");
+            }
+
+
+            var messages = await _messageRepository.GetAllByTicketIdAndUserIdAsync(ticketId, userId);              
             var data = _mapper.Map<List<GetMessageDto>>(messages);
             return data;
         }
@@ -104,7 +103,8 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
             {
-                throw new ForbiddenException("You are not authorized to send messages in this ticket.");
+                throw new ForbiddenException(
+                    "You can only send messages in tickets you created or are assigned to.");
             }
 
 
@@ -150,6 +150,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             // Send the new message to both the sender and receiver in real time via SignalR
 
             var messageDto = _mapper.Map<GetMessageDto>(message);
+            
 
             string receiverId = userId == ticket.CustomerId
                 ? ticket.AssignedToId
@@ -175,17 +176,10 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
 
         // Delete a message or multiple messages
+        // Ensure users can only delete messages of their created or assigned tickets
         public async Task DeleteRangeAsync(int ticketId, List<int> ids)
         {
-            var messages = await _messageRepository.GetAllByIdsWithAttachmentsAsync(ids);
-
-
-            if (messages.Count != ids.Count)
-            {
-                throw new NotFoundException(nameof(Message), "One or more messages were not found.");
-            }
-
-            
+            string userId = _currentUserService.UserId;
 
             var ticket = await _ticketRepository.GetByIdAsync(ticketId);
 
@@ -193,6 +187,22 @@ namespace RealTimeSupportChat.Infrastructure.Services
             {
                 throw new NotFoundException(nameof(Ticket), ticketId);
             }
+
+            if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
+            {
+                throw new ForbiddenException(
+                    "You can only delete messages from tickets you created or are assigned to.");
+            }
+
+
+            var messages = await _messageRepository.GetAllByIdsWithAttachmentsAsync(ids);
+
+
+            if (messages.Count != ids.Count)
+            {
+                throw new NotFoundException("One or more messages were not found.");
+            }
+
 
 
             // Ensure all messages belong to the same ticket
@@ -205,11 +215,10 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             // Ensures only the message sender can delete the messages
 
-            string userId = _currentUserService.UserId;
-
+           
             if (messages.Any(m => m.SenderId != userId))
             {
-                throw new ForbiddenException("You are not authorized to delete one or more messages.");
+                throw new ForbiddenException("You can only delete your own messages.");
             }
 
 

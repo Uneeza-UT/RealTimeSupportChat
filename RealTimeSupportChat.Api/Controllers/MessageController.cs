@@ -23,6 +23,9 @@ namespace RealTimeSupportChat.Api.Controllers
 
 
         [HttpGet]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(403)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<List<GetMessageDto>>> Get(int ticketId)
         {
             var messages = await _messagService.GetByTicketIdAsync(ticketId);

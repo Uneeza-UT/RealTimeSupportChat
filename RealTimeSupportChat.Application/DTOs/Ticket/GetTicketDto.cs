@@ -10,7 +10,6 @@ namespace RealTimeSupportChat.Application.DTOs.Ticket
         public string Description { get; set; }
         public TicketStatus Status { get; set; }
         public string? AssignedToId { get; set; }
-        public string? PreviousAssigneeId { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }
 }

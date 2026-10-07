@@ -10,7 +10,7 @@ namespace RealTimeSupportChat.Application.Validations.Message
             RuleFor(m => m)
                 .Must(m =>
                     !string.IsNullOrWhiteSpace(m.Content) ||
-                    m.Attachments.Any())
+                     (m.Attachments?.Any() ?? false))
                 .WithMessage("A message must contain text or at least one attachment.");
 
         }

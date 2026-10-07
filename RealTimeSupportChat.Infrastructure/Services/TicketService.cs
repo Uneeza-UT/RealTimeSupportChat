@@ -70,7 +70,12 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
         public async Task<GetTicketDto> GetByIdAsync(int id)
         {
-            Ticket ticket;
+            var ticket = await _ticketRepository.GetByIdAsync(id);
+
+            if (ticket == null)
+            {
+                throw new NotFoundException(nameof(Ticket), id);
+            }
 
             string userId = _currentUserService.UserId;
             string role = _currentUserService.Role;
@@ -79,27 +84,31 @@ namespace RealTimeSupportChat.Infrastructure.Services
             switch (role)
             {
                 case "Customer":
-                    ticket = await _ticketRepository.GetByIdAndCustomerIdAsync(id, userId);
+                    if (ticket.CustomerId != userId)
+                    {
+                        throw new ForbiddenException(
+                            "You can only view tickets you created.");
+                    }
                     break;
 
-                case "SupportManager":
-                    ticket = await _ticketRepository.GetByIdAsync(id);
-                    break;
 
                 case "SupportAgent":
-                    ticket = await _ticketRepository.GetByIdAndAssignedToIdAsync(id, userId);
+                    if (ticket.AssignedToId != userId)
+                    {
+                        throw new ForbiddenException(
+                            "You can only view tickets assigned to you.");
+                    }
                     break;
+
+
+
+                case "SupportManager":
+                    break;
+
 
                 default:
                     throw new ForbiddenException("You are not authorized to view tickets.");
             }
-
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), id);
-            }
-
 
             var data = _mapper.Map<GetTicketDto>(ticket);
             return data;
@@ -268,7 +277,8 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             if (ticket.AssignedToId != _currentUserService.UserId)
             {
-                throw new ForbiddenException("You are not authorized to change the status of this ticket.");
+                throw new ForbiddenException(
+                    "You can only change the status of a ticket assigned to you.");
             }
 
 
@@ -320,7 +330,8 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             if (ticket.Status != TicketStatus.Closed)
             {
-                throw new BadRequestException("This ticket cannot be deleted because it hasn't been closed yet.");
+                throw new BadRequestException(
+                    "This ticket cannot be deleted because it hasn't been closed yet.");
             }
 
 

@@ -1,4 +1,5 @@
 ﻿using RealTimeSupportChat.Application.DTOs.Attachment;
+using RealTimeSupportChat.Application.DTOs.Ticket;
 
 namespace RealTimeSupportChat.Application.DTOs.Message
 {
@@ -8,6 +9,7 @@ namespace RealTimeSupportChat.Application.DTOs.Message
         public int TicketId { get; set; }
         public string SenderId { get; set; }
         public string? Content { get; set; }
+        public GetTicketDto? Ticket { get; set; }
 
         public List<GetAttachmentDto> Attachments { get; set; } = new List<GetAttachmentDto>();
     }

@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\attachments\" />
+    <EmbeddedResource Include="Swagger\index.html" />
   </ItemGroup>
 
   <ItemGroup>

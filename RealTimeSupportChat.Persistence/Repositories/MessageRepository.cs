@@ -13,23 +13,13 @@ namespace RealTimeSupportChat.Persistence.Repositories
         }
 
 
-        // Get all messages belonging to a specific ticket
-        public async Task<IReadOnlyList<Message>> GetAllByTicketIdAsync(int ticketId)
-        {
-            return await _dbContext.Set<Message>()
-                .AsNoTracking()
-                .Include(m => m.Attachments)
-                .Where(m => m.TicketId == ticketId)
-                .ToListAsync();
-        }
-
-
         // Get all messages belonging to a specific ticket if the user is the customer or assigned support agent
         public async Task<IReadOnlyList<Message>> GetAllByTicketIdAndUserIdAsync(int ticketId, string userId)
         {
             return await _dbContext.Set<Message>()
                 .AsNoTracking()
                 .Include(m => m.Attachments)
+                .Include(m => m.Ticket)
                 .Where(m => m.TicketId == ticketId && 
                     (m.Ticket.CustomerId == userId || m.Ticket.AssignedToId == userId))
                 .ToListAsync();

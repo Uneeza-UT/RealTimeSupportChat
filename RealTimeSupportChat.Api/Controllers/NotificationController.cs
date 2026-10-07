@@ -37,9 +37,12 @@ namespace RealTimeSupportChat.Api.Controllers
 
 
 
-        [HttpPatch("{id}")]
+        [HttpPatch("{id}/read")]
         [ProducesResponseType(204)]
+        [ProducesResponseType(403)]
         [ProducesResponseType(404)]
+        [EndpointSummary("Mark a notification as read")]
+        [EndpointDescription("Marks the specified notification as read.")]
         public async Task<ActionResult> Patch(int id)
         {
             await _notificationService.MarkAsReadAsync(id);

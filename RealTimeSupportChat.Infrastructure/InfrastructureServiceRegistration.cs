@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RealTimeSupportChat.Application.Contracts.Email;
 using RealTimeSupportChat.Application.Contracts.Services;
@@ -29,6 +30,7 @@ namespace RealTimeSupportChat.Infrastructure
             services.AddScoped<INotificationService, NotificationService>();
             services.AddScoped<IFileStorageService, FileStorageService>();
             services.AddScoped<IChatHubService, ChatHubService>();
+            services.AddSingleton<IUserIdProvider, SignalRUserIdProvider>();
 
             return services;
         }

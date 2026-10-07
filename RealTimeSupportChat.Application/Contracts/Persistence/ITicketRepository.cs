@@ -6,7 +6,5 @@ namespace RealTimeSupportChat.Application.Contracts.Persistence
     {   
         Task<IReadOnlyList<Ticket>> GetAllByCustomerIdAsync(string customerId);
         Task<IReadOnlyList<Ticket>> GetAllByAssignedToIdAsync(string assignedToId);
-        Task<Ticket?> GetByIdAndCustomerIdAsync(int ticketId, string customerId);
-        Task<Ticket?> GetByIdAndAssignedToIdAsync(int ticketId, string assignedToId);
     }
 }
