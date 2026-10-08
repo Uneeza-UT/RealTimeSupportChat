@@ -1,6 +1,7 @@
 ﻿window.addEventListener("swagger-ready", async () => {
     let currentUserId = null;
     let token = null;
+    let currentTicketId = null;
 
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("/hubs/support-chat", {
@@ -27,20 +28,14 @@
 
         const messageElement = document.createElement("div");
         messageElement.classList.add("message");
-
-        console.log("Message: ", message);
-        console.log("CustomerId: ", message.ticket.customerId);
-        console.log("SenderId: ", message.senderId);
-        console.log("CurrentUserId: ", currentUserId);
+        messageElement.dataset.messageId = message.id;
 
         if (message.senderId === message.ticket.customerId) {
             if (currentUserId === message.ticket.customerId) {
-                console.log("First If Condition of Id : ", currentUserId === message.ticket.customerId);
                 messageElement.classList.add("message-sent");
             }
 
             else {
-                console.log("First else Condition of If : ", currentUserId === message.ticket.customerId);
                 messageElement.classList.add("message-received");
             }
         }
@@ -48,12 +43,10 @@
 
         else {
             if (currentUserId === message.ticket.customerId) {
-                console.log("First if Condition of else : ", currentUserId === message.ticket.customerId);
                 messageElement.classList.add("message-received");
             }
 
             else {
-                console.log("First else Condition of else : ", currentUserId === message.ticket.customerId);
                 messageElement.classList.add("message-sent");
             }
         }
@@ -114,18 +107,28 @@
 
     connection.on("ReceiveMessage", message => {
 
+        if (message.ticketId !== currentTicketId) {
+            return;
+        }
+
         displayMessage(message);
  
     });
 
 
     connection.on("MessagesDeleted", messageIds => {
+
         messageIds.forEach(messageId => {
 
             const messageElement = document.querySelector(`[data-message-id = "${messageId}"]`);
 
             if (messageElement) {
-                messageElement.remove();
+                messageElement.innerHTML = "";
+
+                const deletedElement = document.createElement("i");
+                deletedElement.textContent = "This message was deleted.";
+
+                messageElement.appendChild(deletedElement);
             }
         });
     });
@@ -133,6 +136,7 @@
 
 
     connection.on("ReceiveNotification", notification => {
+
         alert("Notification: " + notification.message)
     });
 
@@ -148,7 +152,9 @@
                 document.getElementById("messages").innerHTML = "";
 
                 await connection.start();
- 
+
+                alert("SignalR Connected!");
+
             }
             catch (error)
             {
@@ -165,6 +171,9 @@
                 console.error("Please enter a ticket ID.");
                 return;
             }
+
+            currentTicketId = Number(ticketId);
+
             await loadMessages(ticketId);
         })    
     

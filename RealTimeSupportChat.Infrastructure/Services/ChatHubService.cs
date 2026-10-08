@@ -19,7 +19,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
         public async Task SendMessageAsync(string receiverId, GetMessageDto messageDto)
         {
             await _hubContext.Clients
-                .Users(receiverId, messageDto.SenderId)
+                .Users(messageDto.SenderId, receiverId)
                 .SendAsync("ReceiveMessage", messageDto);
         }
 

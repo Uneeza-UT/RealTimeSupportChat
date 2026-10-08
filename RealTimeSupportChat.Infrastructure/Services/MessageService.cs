@@ -42,24 +42,14 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
         public async Task<List<GetMessageDto>> GetByTicketIdAsync(int ticketId)
         {
-            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), ticketId);
-            }
-
+            var ticket = await GetTicketOrThrowAsync(ticketId);
 
             string userId = _currentUserService.UserId;
- 
+            string errorMessage = "You can only view messages of tickets you created or are assigned to.";
 
-            if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
-            {
-                throw new ForbiddenException(
-                    "You can only view messages of tickets you created or are assigned to.");
-            }
+            EnsureTicketAccess(ticket, userId, errorMessage);
 
-
+       
             var messages = await _messageRepository.GetAllByTicketIdAndUserIdAsync(ticketId, userId);              
             var data = _mapper.Map<List<GetMessageDto>>(messages);
             return data;
@@ -82,12 +72,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
-            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), ticketId);
-            }
+            var ticket = await GetTicketOrThrowAsync(ticketId);
 
 
             // Prevent sending messages in unassigned tickets
@@ -101,11 +86,9 @@ namespace RealTimeSupportChat.Infrastructure.Services
             // Ensure only the customer who created the ticket and
             // the user assigned to it can send messages in the ticket
 
-            if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
-            {
-                throw new ForbiddenException(
-                    "You can only send messages in tickets you created or are assigned to.");
-            }
+            string errorMessage = "You can only send messages in tickets you created or are assigned to.";
+            EnsureTicketAccess(ticket, userId, errorMessage);
+
 
 
             // Prevent sending messages in closed tickets
@@ -181,18 +164,10 @@ namespace RealTimeSupportChat.Infrastructure.Services
         {
             string userId = _currentUserService.UserId;
 
-            var ticket = await _ticketRepository.GetByIdAsync(ticketId);
+            var ticket = await GetTicketOrThrowAsync(ticketId);
 
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), ticketId);
-            }
-
-            if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
-            {
-                throw new ForbiddenException(
-                    "You can only delete messages from tickets you created or are assigned to.");
-            }
+            string errorMessage = "You can only delete messages from tickets you created or are assigned to.";
+            EnsureTicketAccess(ticket, userId, errorMessage);
 
 
             var messages = await _messageRepository.GetAllByIdsWithAttachmentsAsync(ids);
@@ -202,7 +177,6 @@ namespace RealTimeSupportChat.Infrastructure.Services
             {
                 throw new NotFoundException("One or more messages were not found.");
             }
-
 
 
             // Ensure all messages belong to the same ticket
@@ -215,11 +189,8 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
             // Ensures only the message sender can delete the messages
 
-           
-            if (messages.Any(m => m.SenderId != userId))
-            {
-                throw new ForbiddenException("You can only delete your own messages.");
-            }
+            var userRole = _currentUserService.Role;
+            EnsureCanDeleteMessages(ticket, messages, userRole);
 
 
             // Delete attachments associated with the messages
@@ -244,5 +215,44 @@ namespace RealTimeSupportChat.Infrastructure.Services
             await _chatHubService.DeleteMessagesAsync(ids, userId, receiverId);
         }
 
+
+
+        // Gets a ticket or throws NotFoundException if it doesn't exist.
+        private async Task<Ticket> GetTicketOrThrowAsync(int id)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(id);
+
+            if (ticket == null)
+            {
+                throw new NotFoundException(nameof(Ticket), id);
+            }
+
+            return ticket;
+        }
+
+
+        
+        private void EnsureTicketAccess(Ticket ticket, string userId, string errorMessage)
+        {
+            if (ticket.CustomerId != userId && ticket.AssignedToId != userId)
+            {
+                throw new ForbiddenException(errorMessage);
+            }
+        }
+
+
+        private void EnsureCanDeleteMessages(Ticket ticket, List<Message> messages, string userRole)
+        {
+            if (userRole == "Customer" && messages.Any(m => m.SenderId != ticket.CustomerId))
+            {
+                throw new ForbiddenException("You can only delete your own messages.");
+            }
+
+            else if ((userRole == "SupportAgent" || userRole == "SupportManager") &&
+                messages.Any(m => m.SenderId == ticket.CustomerId))
+            {
+                throw new ForbiddenException("You can only delete your own messages.");
+            }
+        }
     }
 }

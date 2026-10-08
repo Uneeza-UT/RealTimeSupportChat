@@ -70,13 +70,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
 
         public async Task<GetTicketDto> GetByIdAsync(int id)
         {
-            var ticket = await _ticketRepository.GetByIdAsync(id);
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), id);
-            }
-
+            var ticket = await GetTicketOrThrowAsync(id);
             string userId = _currentUserService.UserId;
             string role = _currentUserService.Role;
 
@@ -175,12 +169,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
-            var ticket = await _ticketRepository.GetByIdAsync(id);
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), id);
-            }
+            var ticket = await GetTicketOrThrowAsync(id);
 
 
             // Ensures that the user who is being assigned the ticket is a support agent or manager
@@ -267,12 +256,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             }
 
 
-            var ticket = await _ticketRepository.GetByIdAsync(id);
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), id);
-            }
+            var ticket = await GetTicketOrThrowAsync(id);
 
 
             if (ticket.AssignedToId != _currentUserService.UserId)
@@ -320,13 +304,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
         // Only users with "SupportManager" role can perform this task
         public async Task DeleteAsync(int id)
         {
-            var ticket = await _ticketRepository.GetByIdAsync(id);
-
-            if (ticket == null)
-            {
-                throw new NotFoundException(nameof(Ticket), id);
-            }
-
+            var ticket = await GetTicketOrThrowAsync(id);
 
             if (ticket.Status != TicketStatus.Closed)
             {
@@ -341,7 +319,7 @@ namespace RealTimeSupportChat.Infrastructure.Services
             notifications.Add(new SendNotificationDto
             {
                 TicketId = ticket.Id,
-                ReceiverId = ticket.AssignedToId,
+                ReceiverId = ticket.AssignedToId!,
                 Message =  $"The ticket \"{ticket.Subject}\" you were assigned to has been deleted by the support Manager."
             });
 
@@ -356,6 +334,20 @@ namespace RealTimeSupportChat.Infrastructure.Services
             await _notificationService.SendManyAsync(notifications);
 
             await _ticketRepository.DeleteAsync(ticket);
+        }
+
+
+        // Gets a ticket or throws NotFoundException if it doesn't exist.
+        private async Task<Ticket> GetTicketOrThrowAsync(int id)
+        {
+            var ticket = await _ticketRepository.GetByIdAsync(id);
+
+            if (ticket == null)
+            {
+                throw new NotFoundException(nameof(Ticket), id);
+            }
+
+            return ticket;
         }
     }
 }
