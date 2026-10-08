@@ -73,21 +73,19 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI(options =>
-    {
-        options.InjectJavascript("/swagger/signalr.min.js");
-        options.InjectJavascript("/swagger/SignalRTest.js");
 
-        options.IndexStream = () =>
-        typeof(Program).Assembly
-            .GetManifestResourceStream(
-                "RealTimeSupportChat.Api.Swagger.index.html");
-    });
-    app.MapOpenApi();
-}
+app.UseSwagger();
+app.UseSwaggerUI(options =>
+{
+    options.InjectJavascript("/swagger/signalr.min.js");
+    options.InjectJavascript("/swagger/SignalRTest.js");
+
+    options.IndexStream = () =>
+    typeof(Program).Assembly
+        .GetManifestResourceStream(
+            "RealTimeSupportChat.Api.Swagger.index.html");
+});
+app.MapOpenApi();
 
 
 app.UseCors("AllowAll");
