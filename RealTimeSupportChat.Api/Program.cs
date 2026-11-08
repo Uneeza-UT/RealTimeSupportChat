@@ -87,19 +87,31 @@ app.UseSwaggerUI(options =>
 
     options.ConfigObject.PersistAuthorization = true;
 
+
     options.UseResponseInterceptor("""
-    (response) => {
-        console.log("Response URL:", response.url);
-        console.log("Response object:", response);
-        console.log("Response obj:", response.obj);
+        (response) => {
+        console.log(response);
+        console.log("Intercetor Executed", response);
+            if (
+                response.url?.includes("/api/Auth/login") &&
+                response.status >= 200 &&
+                response.status < 300
+            ) {
+                try {
+                    const body = JSON.parse(response.text);
+                    const token = body?.token;
 
-        if (response.url?.includes("/api/Auth/login")) {
-            console.log("Login response detected");
+                    if (token) {
+                        window.ui.preauthorizeApiKey("Bearer", token);
+                    }
+                } catch (error) {
+                    console.error("Could not extract login token:", error);
+                }
+            }
+
+            return response;
         }
-
-        return response;
-    }
-    """);
+        """);
 
 });
 app.MapOpenApi();
