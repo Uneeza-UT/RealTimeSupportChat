@@ -85,33 +85,10 @@ app.UseSwaggerUI(options =>
         .GetManifestResourceStream(
             "RealTimeSupportChat.Api.Swagger.index.html");
 
+
     options.ConfigObject.PersistAuthorization = true;
 
-
-    options.UseResponseInterceptor("""
-        (response) => {
-        console.log(response);
-        console.log("Intercetor Executed", response);
-            if (
-                response.url?.includes("/api/Auth/login") &&
-                response.status >= 200 &&
-                response.status < 300
-            ) {
-                try {
-                    const body = JSON.parse(response.text);
-                    const token = body?.token;
-
-                    if (token) {
-                        window.ui.preauthorizeApiKey("Bearer", token);
-                    }
-                } catch (error) {
-                    console.error("Could not extract login token:", error);
-                }
-            }
-
-            return response;
-        }
-        """);
+    
 
 });
 app.MapOpenApi();
