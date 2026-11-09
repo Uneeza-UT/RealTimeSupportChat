@@ -113,42 +113,48 @@ The project follows Clean Architecture principles:
 RealTimeSupportChat
 │
 ├── API
+│   ├── wwwroot
 │   ├── Controllers
 │   ├── Middleware
 │   ├── Models
+│   ├── Swagger
 │   └── Program.cs
 │
 ├── Application
+│   ├── Contracts
+│   │   ├── Email
+│   │   ├── Identity
+│   │   ├── Persistence
+│   │   └── Services
+│   │
 │   ├── DTOs
-│   ├── Interfaces
-│   ├── IServices
-│   ├── Services
-│   ├── Validations
+│   ├── Exceptions
 │   ├── Mapping Profiles
-│   └── Exceptions
+│   ├── Models
+│   └── Validations
 │
 ├── Domain
-│   ├── Entities
-│   └── Enums
+│   ├── Common
+│   ├── Enums
+│   └── Entities
 │
 └── Infrastructure
-    ├── Data
-    │   ├── DbContext
-    │   ├── Configurations
-    │   └── Repositories
-    │
     ├── Identity
-    │   ├── DbContext
     │   ├── Configurations
+    │   ├── DbContext
     │   └── Models
+    │   └── Services
     │
-    ├── Hubs
-    │   └── SupportChatHub
+    └── Infrastructure       
+    │   ├── Email Service
+    │   ├── Hubs
+    │   └── Services
     │
-    └── Services
-        ├── ChatHubService
-        ├── FileStorageService
-        └── SignalRUserIdProvider
+    └── Persistence
+        └── Configurations
+        ├── DbContext
+        ├── Repositories
+
 ```
 
 ---
