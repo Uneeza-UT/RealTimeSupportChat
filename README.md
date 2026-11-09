@@ -163,24 +163,34 @@ RealTimeSupportChat
 
 ## Authentication
 
-The API uses ASP.NET Core Identity for user management and JWT Bearer tokens for authentication.
+The API uses ASP.NET Core Identity for user management and JWT Bearer
+tokens for authentication.
 
-After logging in, the client receives a JWT token which must be included in authenticated requests:
+After a successful login, the API returns a JWT token. Authenticated
+requests use the following header:
 
+``` http
 Authorization: Bearer <token>
+```
 
-Most API endpoints require authentication.
+Most customer and administrative operations require authentication.
+Access to protected operations is controlled through role-based
+authorization.
 
-
----
-
-
+------------------------------------------------------------------------
 
 ## Using Swagger
 
-1. Use the Login endpoint to log in with one of the demo accounts provided below in the Test Accounts section, or create a new account using the Register endpoint.
+1.  Use the **Login** endpoint to log in with an existing account, or
+    create a new account using the **Register** endpoint.
+2.  After a successful login response (HTTP 200), Swagger automatically
+    retrieves the JWT token from the response and applies it to
+    subsequent authorized requests.
+3.  You can then test protected endpoints without manually copying the
+    token into Swagger's Authorize dialog.
 
-2. After a successful login (HTTP 200), Swagger automatically retrieves and applies the JWT token. You can then access the authorized endpoints without manually entering the token.
+The automatic token handling is implemented through custom Swagger
+JavaScript.
 
 
 ---
@@ -409,10 +419,13 @@ Before running the application, configure the following settings:
   "JwtSettings": {
     "Key": "your-secret-key",
     "Issuer": "your-issuer",
-    "Audience": "your-audience"
+    "Audience": "your-audience",
+    "DurationInMinutes": 30
   },
-  "Resend": {
-    "ApiKey": "your-resend-api-key"
+  "EmailSettings": {
+    "ApiKey": "your-secret-key",
+    "FromAddress": "your-email-provider-email-address",
+    "FromName": "your-email-provider-name"
   }
 }
 ```
@@ -632,10 +645,12 @@ The API can be consumed by a frontend application in the future.
 - Entity Framework Core with SQL Server
 - FluentValidation
 - AutoMapper
+- Email Notifications
 - Global exception handling middleware
 - File attachment support
 - Persistent message history
 - Ticket assignment and reassignment
 - Ticket status management
 - Swagger/OpenAPI documentation
+- Automatic JWT handling in Swagger
 
