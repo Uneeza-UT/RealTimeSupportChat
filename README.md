@@ -35,6 +35,11 @@ The API uses ASP.NET Core SignalR to provide real-time communication between cus
 - Role-based and resource-based authorization
 
 
+---
+
+
+
+
 
 ## User Roles
 
@@ -76,6 +81,9 @@ The API uses ASP.NET Core SignalR to provide real-time communication between cus
 - Receive real-time messages and notifications
 
 
+---
+
+
 
 ## Technologies
 
@@ -94,272 +102,8 @@ The API uses ASP.NET Core SignalR to provide real-time communication between cus
 - Clean Architecture
 
 
-
-## Architecture
-
-The project follows Clean Architecture principles:
-
-
-```text
-JobManagement
-│
-├── API
-│   ├── wwwroot
-│   ├── Controllers
-│   ├── Middleware
-│   ├── Models
-│   ├── Swagger
-│   └── Program.cs
-│
-├── Core
-│   ├── Application
-│   │   ├── Contracts
-│   │          ├── Email
-│   │          ├── Identity
-│   │          ├── Persistence
-│   │          ├── Services
-│   │   ├── DTOs
-│   │   └── Exceptions
-│   │   └── Mapping Profiles
-│   │   └── Models
-│   │   ├── Validations
-│   │
-│   └── Domain
-│       ├── Entities
-│       ├── Common
-│       └── Enums
-│
-└── Infrastructure
-    ├── Identity
-    │   ├── Configurations
-    │   ├── DbContext
-    │   └── Models
-    │   └── Services
-    │
-    └── Infrastructure       
-    │   ├── Email Service
-    │   ├── Hubs
-    │   ├── Services
-    │
-    └── Persistence
-        ├── Configurations
-        ├── DatabaseContext
-        └── Repositories
-
-```
-
-
-
-## Authentication
-
-The API uses ASP.NET Core Identity for user management and JWT Bearer tokens for authentication.
-
-After logging in, the client receives a JWT token which must be included in authenticated requests:
-
-Authorization: Bearer <token>
-
-Most API endpoints require authentication.
-
-
-
-## Using Swagger
-
-1. Use the **Login** endpoint in Swagger to log in with one of the demo accounts provided below in the Test Accounts section.
-2. Copy the `token` value from the login response.
-3. Click **Authorize** 🔒 at the top of the Swagger page.
-4. Paste **only the token value** into the authorization field.
-5. Do **not** include quotation marks (`" "`) or the `Bearer ` prefix.
-6. Click **Authorize**, then **Close**.
-7. You can now test the protected endpoints according to the user's role.
-
-**Example:** If the login response contains:
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1Ni..."
-}
-```
-
-paste:
-
-```text
-eyJhbGciOiJIUzI1Ni...
-```
-
-into the Swagger authorization field.
-
-
-
-
-## Authorization
-
-Authorization is role-based and resource-based.
-
-Users can only access resources they are authorized to access.
-
-For example:
-
-- Customers can only view their own tickets.
-- Support agents can only view tickets assigned to them.
-- Support managers can view all tickets.
-- Customers can only send messages in tickets they created.
-- Support agents and support managers can only send messages in tickets assigned to them.
-- Users can only access their own notifications.
-- Customers can only delete customer-side messages.
-- Support staff can only delete support-side messages.
-
-
-
-## Real-Time Messaging
-
-Real-time communication is implemented using ASP.NET Core SignalR.
-
-The SignalR hub is available at:
-
-`/hubs/support-chat`
-
-When a user connects to the hub, their JWT is used to identify their user account.
-
-Messages are delivered to the intended recipient in real time.
-
-The general flow is:
-
-```text
-Customer
-   │
-   │ Send Message
-   ▼
-ASP.NET Core API
-   │
-   ├── Save message to SQL Server
-   │
-   ├── Send SignalR message
-   │
-   └── Create notification
-            │
-            ▼
-       Support Agent/Manager
-```
-
-SignalR is used for real-time delivery, while the REST API is used to retrieve existing message history.
-
-
-
-## Message History
-
-Messages are stored in SQL Server and can be retrieved through the API.
-
-This allows users to load previous messages when opening a ticket.
-
-The system uses both:
-
-```text
-REST API
-    ↓
-Load existing message history
-
-SignalR
-    ↓
-Receive new messages in real time
-```
-
-This means messages remain available even if a user was offline when the message was sent.
-
-
-# Real-Time Support Chat System API
-
-A RESTful ASP.NET Core Web API for managing customer support tickets, real-time messaging, ticket assignments, file attachments, notifications, and user accounts.
-
-The API uses **ASP.NET Core SignalR** to provide real-time communication between customers and support staff, while REST API endpoints are used for ticket management, message history, notifications, authentication, and other operations.
-
 ---
 
-## Features
-
-- User registration and login
-- JWT authentication
-- Role-based authorization
-  - Customer
-  - SupportAgent
-  - SupportManager
-- Customer support ticket management
-- Ticket creation and management
-- Support agent assignment and reassignment
-- Ticket status management
-- Real-time messaging using SignalR
-- Message history
-- Message deletion
-- File attachments in messages
-- Local file storage
-- Real-time notifications
-- Persistent notification history
-- Read/unread notification management
-- Password change
-- Swagger/OpenAPI documentation
-- Input validation using FluentValidation
-- Global exception handling
-- Custom logging
-- SQL Server database with Entity Framework Core
-- ASP.NET Core Identity
-- Role-based and resource-based authorization
-
----
-
-## User Roles
-
-### Customer
-
-- Create support tickets
-- View their own tickets
-- Send messages in their tickets
-- View message history
-- Send file attachments
-- Delete their own messages
-- View notifications
-- Mark notifications as read
-- Delete their own notifications
-- Track ticket status
-
-### SupportAgent
-
-- View tickets assigned to them
-- View ticket details
-- Send messages to customers
-- View message history
-- Send file attachments
-- Delete support messages
-- Change the status of assigned tickets
-- Receive real-time messages and notifications
-
-### SupportManager
-
-- View all support tickets
-- Assign tickets to support agents
-- Reassign tickets
-- View ticket details
-- Receive notifications about new tickets
-- Send messages where permitted
-- Manage tickets assigned to support staff
-- Delete closed tickets
-
----
-
-## Technologies
-
-- ASP.NET Core Web API
-- .NET 10
-- C#
-- Entity Framework Core
-- SQL Server
-- ASP.NET Core Identity
-- JWT Authentication
-- SignalR
-- FluentValidation
-- AutoMapper
-- Swagger / OpenAPI
-- Clean Architecture
-
----
 
 ## Architecture
 
@@ -409,45 +153,33 @@ RealTimeSupportChat
 
 ---
 
+
+
 ## Authentication
 
-The API uses **ASP.NET Core Identity** for user management and **JWT Bearer tokens** for authentication.
+The API uses ASP.NET Core Identity for user management and JWT Bearer tokens for authentication.
 
 After logging in, the client receives a JWT token which must be included in authenticated requests:
 
-```text
 Authorization: Bearer <token>
-```
 
 Most API endpoints require authentication.
 
-### Using Swagger
-
-1. Use the **Login** endpoint in Swagger.
-2. Copy the `token` value from the login response.
-3. Click **Authorize** 🔒 at the top of the Swagger page.
-4. Paste **only the token value** into the authorization field.
-5. Do **not** include quotation marks (`" "`) or the `Bearer ` prefix.
-6. Click **Authorize**, then **Close**.
-7. You can now test the protected endpoints according to the user's role.
-
-Example login response:
-
-```json
-{
-  "token": "eyJhbGciOiJIUzI1Ni..."
-}
-```
-
-Paste only:
-
-```text
-eyJhbGciOiJIUzI1Ni...
-```
-
-into the Swagger authorization field.
 
 ---
+
+
+
+## Using Swagger
+
+1. Use the Login endpoint to log in with one of the demo accounts provided below in the Test Accounts section, or create a new account using the Register endpoint.
+
+2. After a successful login (HTTP 200), Swagger automatically retrieves and applies the JWT token. You can then access the authorized endpoints without manually entering the token.
+
+
+---
+
+
 
 ## Authorization
 
@@ -461,12 +193,19 @@ For example:
 - Support agents can only view tickets assigned to them.
 - Support managers can view all tickets.
 - Customers can only send messages in tickets they created.
-- Support agents can only send messages in tickets assigned to them.
+- Support agents and support managers can only send messages in tickets assigned to them.
 - Users can only access their own notifications.
 - Customers can only delete customer-side messages.
 - Support staff can only delete support-side messages.
 
+
+
+
 ---
+
+
+
+
 
 ## Real-Time Messaging
 
@@ -504,6 +243,7 @@ ASP.NET Core API
 SignalR is used for real-time delivery, while the REST API is used to retrieve existing message history.
 
 
+---
 
 
 ## Message History
@@ -526,7 +266,7 @@ Receive new messages in real time
 
 This means messages remain available even if a user was offline when the message was sent.
 
-
+---
 
 
 ## Ticket Management
@@ -549,6 +289,7 @@ A ticket can only be closed after it has been resolved.
 Closed tickets cannot have their status changed or receive new messages.
 
 
+---
 
 
 ## Ticket Assignment
@@ -562,6 +303,8 @@ When a ticket is assigned or reassigned, notifications are generated for the rel
 The system keeps previous messages in the ticket even when the assigned support agent changes.
 
 
+
+---
 
 
 ## Notifications
@@ -589,6 +332,8 @@ Real-time notifications are also delivered through SignalR.
 
 
 
+---
+
 
 ## File Attachments
 
@@ -606,6 +351,7 @@ The database stores information about each attachment, including:
 A message can contain text, attachments, or both.
 
 
+---
 
 
 ## Validation
@@ -624,47 +370,7 @@ Validation errors are returned as appropriate HTTP `400 Bad Request` responses.
 
 
 
-
-## Database
-
-The application uses **SQL Server** with Entity Framework Core.
-
-The database contains entities for:
-
-- Users and roles
-- Tickets
-- Messages
-- Attachments
-- Notifications
-
-ASP.NET Core Identity is used for user and role management.
-
-
-
-
-
-## Database Setup
-
-
-This project uses SQL Server and Entity Framework Core.
-The repository includes EF Core migrations required to create the database.
-
-1. Create a SQL Server database or configure a SQL Server instance.
-2. Update the connection string in `appsettings.json` or user secrets.
-3. Open the project in Visual Studio.
-4. Migrations are committed to GitHub.
-5. After configuring the SQL Server connection string, run:
-
-Select Persistence project as default project:
-update-database -Context ApplicationDbContext
-
-Select Identity project as default project:
-update-database -Context ApplicationIdentityDbContext
-
-6. Start the application.
-
-
-
+---
 
 
 ## Prerequisites
@@ -674,6 +380,9 @@ update-database -Context ApplicationIdentityDbContext
 - GitHub
 - A Resend account and API key for email functionality
 
+
+
+---
 
 
 ## Configuration
@@ -707,6 +416,52 @@ Sensitive values such as the JWT signing key and database credentials should be 
 
 
 
+---
+
+
+
+
+## Database
+
+The application uses **SQL Server** with Entity Framework Core.
+
+The database contains entities for:
+
+- Users and roles
+- Tickets
+- Messages
+- Attachments
+- Notifications
+
+ASP.NET Core Identity is used for user and role management.
+
+
+---
+
+
+## Database Setup
+
+
+This project uses SQL Server and Entity Framework Core.
+The repository includes EF Core migrations required to create the database.
+
+1. Create a SQL Server database or configure a SQL Server instance.
+2. Update the connection string in `appsettings.json` or user secrets.
+3. Open the project in Visual Studio.
+4. Migrations are committed to GitHub.
+5. After configuring the SQL Server connection string, run:
+
+Select Persistence project as default project:
+update-database -Context ApplicationDbContext
+
+Select Identity project as default project:
+update-database -Context ApplicationIdentityDbContext
+
+6. Start the application.
+
+
+
+---
 
 
 ## Running the Application
@@ -743,7 +498,7 @@ dotnet run
 ```
 
 
-
+---
 
 
 ## Swagger / API Documentation
@@ -761,7 +516,7 @@ The Swagger interface can be used to test the REST API endpoints.
 The project also includes a custom SignalR testing interface in Swagger for testing real-time messaging without a separate frontend application.
 
 
-
+---
 
 
 
@@ -776,21 +531,20 @@ Recommended testing flow:
 5. Start the API.
 6. Open Swagger.
 7. Register a customer and support user, or use seeded test accounts if configured.
-8. Log in to obtain a JWT token.
-9. Click **Authorize** in Swagger.
-10. Enter the JWT token.
-11. Create a support ticket as a customer.
-12. Assign the ticket to a support agent using the support manager account.
-13. Connect to the SignalR hub.
-14. Send messages between the customer and support agent.
-15. Test real-time message delivery.
-16. Test message history.
-17. Test file attachments.
-18. Test ticket status changes.
-19. Test notifications.
+8. Log in using the login endpoint.
+9. Create a support ticket as a customer.
+10. Assign the ticket to a support agent using the support manager account.
+11. Connect to the SignalR hub.
+12. Send messages between the customer and support agent.
+13. Test real-time message delivery.
+14. Test message history.
+15. Test file attachments.
+16. Test ticket status changes.
+17. Test notifications.
 
 
 
+---
 
 
 ## Test Accounts
@@ -810,7 +564,7 @@ Email: support.agent@example.com
 Password: Agent1234!
  
 
-
+---
 
 
 
@@ -826,7 +580,7 @@ Emails are sent for events such as:
 
 
 
-
+---
 
 
 ## Error Handling
@@ -844,7 +598,7 @@ Common HTTP status codes include:
 - `404 Not Found`
 
 
-
+---
 
 
 ## Project Status
@@ -856,7 +610,7 @@ The project includes REST API functionality, real-time communication using Signa
 The API can be consumed by a frontend application in the future.
 
 
-
+---
 
 
 ## Implementation Highlights
